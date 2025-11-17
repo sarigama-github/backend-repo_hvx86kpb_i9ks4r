@@ -176,7 +176,7 @@ async def add_node(prop_id: str, payload: NodeCreate):
     doc = get_property_or_404(prop_id)
     checklist = doc.get("checklist", [])
 
-    parent, node_list = get_node_by_path(checklist, payload.parent_path)
+    parent, _ = get_node_by_path(checklist, payload.parent_path)
 
     new_node = {
         "id": str(uuid.uuid4()),
@@ -189,8 +189,15 @@ async def add_node(prop_id: str, payload: NodeCreate):
     # If parent_path points to a node, append into its children, else at root
     if payload.parent_path:
         if parent is not None:
-            parent.setdefault("children", [])
+            # Ensure parent is a folder so children are visible in UI
+            if parent.get("kind") != "folder":
+                parent["kind"] = "folder"
+                parent.setdefault("children", [])
+            else:
+                parent.setdefault("children", [])
             parent["children"].append(new_node)
+        else:
+            raise HTTPException(status_code=400, detail="Parent not found")
     else:
         checklist.append(new_node)
 
