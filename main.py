@@ -203,7 +203,7 @@ async def add_node(prop_id: str, payload: NodeCreate):
 
     oid = __import__("bson").ObjectId(prop_id)
     db["property"].update_one({"_id": oid}, {"$set": {"checklist": checklist}})
-    return {"added": True, "node": new_node}
+    return {"added": True, "node": new_node, "checklist": checklist}
 
 
 @app.patch("/api/properties/{prop_id}/checklist")
@@ -233,7 +233,7 @@ async def update_node(prop_id: str, path: Optional[Union[str, List[int]]] = None
 
     oid = __import__("bson").ObjectId(prop_id)
     db["property"].update_one({"_id": oid}, {"$set": {"checklist": checklist}})
-    return {"updated": True, "node": node}
+    return {"updated": True, "node": node, "checklist": checklist}
 
 
 @app.delete("/api/properties/{prop_id}/checklist")
@@ -254,7 +254,7 @@ async def delete_node(prop_id: str, path: Optional[Union[str, List[int]]] = None
 
     oid = __import__("bson").ObjectId(prop_id)
     db["property"].update_one({"_id": oid}, {"$set": {"checklist": checklist}})
-    return {"deleted": True, "removed": removed}
+    return {"deleted": True, "removed": removed, "checklist": checklist}
 
 
 if __name__ == "__main__":
